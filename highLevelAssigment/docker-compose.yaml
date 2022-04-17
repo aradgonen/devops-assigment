@@ -1,0 +1,6 @@
+version: '2'
+services:
+  twitter-fetch:
+    build: twitter-fetch/.
+    ports: 
+      - "8000:5000"
