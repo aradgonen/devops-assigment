@@ -1,6 +1,5 @@
-.history/
-.idea/
-.vscode/
+/.idea/
+/.vscode/
 /twitter-fetcher/.idea/
-/twitter-fetcher/poller/.idea/
 /twitter-fetcher/poller/src/main/resources/secrets
+*secrets

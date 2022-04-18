@@ -32,23 +32,17 @@ public class TwitterPoller implements Runnable{
         this.hashtag = hashtag;
     }
 
-    private void getTweetStreamByHashtag() throws IOException {
+    public BufferedReader getTweetStreamByHashtag() throws IOException {
         Request request = new Request.Builder().url(BASE_URL+"/2/tweets/search/stream").header("Authorization","Bearer " + BEARER_TOKEN).build();
         Response response = null;
         try {
             response = okHttpClient.newCall(request).execute();
-            BufferedReader reader = new BufferedReader(new InputStreamReader((response.body().byteStream())));
-            String line = reader.readLine();
-            while (line != null){
-                System.out.println(line);
-                line = reader.readLine();
-            }
         }
         catch (IOException e) {
             System.out.println("Got error - restarting...");
             getTweetStreamByHashtag();
         }
-
+        return new BufferedReader(new InputStreamReader((response.body().byteStream())));
     }
     private void getRules(){
         //not needed right now
