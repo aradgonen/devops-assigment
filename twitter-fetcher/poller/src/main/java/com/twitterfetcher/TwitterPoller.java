@@ -4,10 +4,22 @@
 package com.twitterfetcher;
 
 import okhttp3.*;
-import okio.Buffer;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.impl.client.HttpClients;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URISyntaxException;
+
 
 
 public class TwitterPoller implements Runnable{
@@ -20,19 +32,30 @@ public class TwitterPoller implements Runnable{
         this.hashtag = hashtag;
     }
 
-    private JSONObject getTweetStreamByHashtag() throws IOException {
+    private void getTweetStreamByHashtag() throws IOException {
         Request request = new Request.Builder().url(BASE_URL+"/2/tweets/search/stream").header("Authorization","Bearer " + BEARER_TOKEN).build();
         Response response = null;
         try {
             response = okHttpClient.newCall(request).execute();
+            BufferedReader reader = new BufferedReader(new InputStreamReader((response.body().byteStream())));
+            String line = reader.readLine();
+            while (line != null){
+                System.out.println(line);
+                line = reader.readLine();
+            }
         }
         catch (IOException e) {
+            System.out.println("Got error - restarting...");
+            getTweetStreamByHashtag();
         }
-            String responseString = response.body().string();
-            JSONObject jsonObject = new JSONObject(responseString);
-            return jsonObject;
-    }
 
+    }
+    private void getRules(){
+        //not needed right now
+    }
+    private void deleteRule(){
+        //not needed right now
+    }
     private void setFilteredStreamRule(String rule) throws IOException {
         String jsonBody = "{ \"add\":[{\"value\":"+'"'+rule+'"'+"}]}";
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"),jsonBody);
@@ -45,19 +68,17 @@ public class TwitterPoller implements Runnable{
             System.out.println("");
         }
         catch (IOException e) {
-//            String responseString = response.body().string();
-//            JSONObject jsonObject = new JSONObject(responseString);
-            Buffer buffer = new Buffer();
-            while (!response.)
+            String responseString = response.body().string();
+            JSONObject jsonObject = new JSONObject(responseString);
         }
     }
 
     public void run() {
         try{
-            System.out.println("Creating rule");
-            setFilteredStreamRule(this.hashtag);
+//            System.out.println("Creating rule");
+//            setFilteredStreamRule(this.hashtag); // run only once
             System.out.println("Listening to tweets");
-            JSONObject jsonObject = getTweetStreamByHashtag();
+            getTweetStreamByHashtag();
         } catch (Exception e) {
             e.printStackTrace();
         }
