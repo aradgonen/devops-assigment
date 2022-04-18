@@ -33,7 +33,7 @@ public class TwitterPoller implements Runnable{
     }
 
     public BufferedReader getTweetStreamByHashtag() throws IOException {
-        Request request = new Request.Builder().url(BASE_URL+"/2/tweets/search/stream").header("Authorization","Bearer " + BEARER_TOKEN).build();
+        Request request = new Request.Builder().url(BASE_URL+"/2/tweets/search/stream?tweet.fields=entities").header("Authorization","Bearer " + BEARER_TOKEN).build();
         Response response = null;
         try {
             response = okHttpClient.newCall(request).execute();
