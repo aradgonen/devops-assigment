@@ -17,10 +17,10 @@ public class TwitterConsumer {
     }
 
     public void start(){
+        System.out.println("Starting ---Twitter Consumer---");
         try {
             this.consumer.subscribe(Arrays.asList(topic));
             consumeFromTopic(consumer, topic);
-            return;
         } finally {
             this.consumer.close();
         }

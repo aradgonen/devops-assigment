@@ -20,6 +20,7 @@ public class TwitterProducer {
     }
 
     public void start(){
+        System.out.println("Starting ---Twitter Producer---");
         try{
             startTweeterStream();
         }
@@ -34,11 +35,11 @@ public class TwitterProducer {
             BufferedReader reader = twitterPoller.getTweetStreamByHashtag();
             String line = reader.readLine();
             while (line != null){
-                line = reader.readLine();
+
                 JSONObject curTweet = new JSONObject(line);
                 ArrayList<String> curHashtags = (ArrayList<String>) curTweet.getJSONObject("data").getJSONObject("entities").get("hashtags");
-                //pass username
-                //pass tweetID
+//                pass username
+//                pass tweetID
                 this.producer.send(new ProducerRecord<>(this.topic,curHashtags.toString()),(event, ex) -> {
                     if (ex != null){
                         ex.printStackTrace();
@@ -51,7 +52,7 @@ public class TwitterProducer {
             }
         }
         catch (Exception e){
-            startTweeterStream();
+            startTweeterStream();//change to restart always
         }
 
     }
