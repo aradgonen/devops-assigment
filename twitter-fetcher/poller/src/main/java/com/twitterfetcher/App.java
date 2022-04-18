@@ -10,9 +10,9 @@ import java.util.concurrent.TimeUnit;
 
 public class App{
     public static void main(String [] args){
-        TwitterPoller twitterPoller = new TwitterPoller();
-        ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(10);
-        scheduledExecutorService.scheduleAtFixedRate(twitterPoller, 0, 5, TimeUnit.SECONDS);
+        TwitterPoller twitterPoller = new TwitterPoller("#DevOps");
+        ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
+        scheduledExecutorService.scheduleAtFixedRate(twitterPoller, 0, 5, TimeUnit.MINUTES);
     }
 }
 
