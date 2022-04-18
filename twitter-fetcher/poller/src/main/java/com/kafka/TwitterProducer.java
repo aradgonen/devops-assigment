@@ -5,6 +5,8 @@ import java.io.*;
 import java.util.*;
 
 import com.twitterfetcher.TwitterPoller;
+import org.json.JSONObject;
+
 public class TwitterProducer {
     private String topic;
     private Properties properties;
@@ -33,7 +35,11 @@ public class TwitterProducer {
             String line = reader.readLine();
             while (line != null){
                 line = reader.readLine();
-                this.producer.send(new ProducerRecord<>(this.topic,line),(event, ex) -> {
+                JSONObject curTweet = new JSONObject(line);
+                ArrayList<String> curHashtags = (ArrayList<String>) curTweet.getJSONObject("data").getJSONObject("entities").get("hashtags");
+                //pass username
+                //pass tweetID
+                this.producer.send(new ProducerRecord<>(this.topic,curHashtags.toString()),(event, ex) -> {
                     if (ex != null){
                         ex.printStackTrace();
                     }
