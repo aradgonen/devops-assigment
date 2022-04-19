@@ -52,9 +52,11 @@ public class TwitterPoller implements Runnable{
     }
     private void getRules(){
         //not needed right now
+        // will get the rules
     }
     private void deleteRule(){
         //not needed right now
+        // get the current defined rules and delete them
     }
     private void setFilteredStreamRule(String rule) throws IOException {
         String jsonBody = "{ \"add\":[{\"value\":"+'"'+rule+'"'+"}]}";
@@ -75,8 +77,8 @@ public class TwitterPoller implements Runnable{
 
     public void run() {
         try{
-//            System.out.println("Creating rule");
-//            setFilteredStreamRule(this.hashtag); // run only once
+            System.out.println("Creating rule");
+            setFilteredStreamRule(this.hashtag); // run only once
             System.out.println("Listening to tweets");
             getTweetStreamByHashtag();
         } catch (Exception e) {
