@@ -1,6 +1,0 @@
-com/kafka/StartProducer.class
-com/kafka/TwitterProducer.class
-com/kafka/TwitterConsumer.class
-com/twitterfetcher/TwitterPoller.class
-com/twitterfetcher/App.class
-com/kafka/StartConsumer.class
