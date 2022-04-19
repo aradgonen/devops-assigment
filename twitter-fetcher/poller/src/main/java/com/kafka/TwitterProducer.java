@@ -35,26 +35,32 @@ public class TwitterProducer {
             BufferedReader reader = twitterPoller.getTweetStreamByHashtag();
             String line = reader.readLine();
             while (line != null){
-
+                if(line.length()==19){
+                    sendTweetToKafka(this.topic,line,line,line);
+                    continue;
+                }
                 JSONObject curTweet = new JSONObject(line);
                 ArrayList<String> curHashtags = (ArrayList<String>) curTweet.getJSONObject("data").getJSONObject("entities").get("hashtags");
-//                pass username
-//                pass tweetID
-                this.producer.send(new ProducerRecord<>(this.topic,curHashtags.toString()),(event, ex) -> {
-                    if (ex != null){
-                        ex.printStackTrace();
-                    }
-                    else {
-                        System.out.println("Sent tweet to topic:"+this.topic);
-                    }
-                });
-                this.producer.flush();
+                String curUsername = curTweet.getJSONObject("data").getJSONObject("entities").get("username").toString();
+                String curTweetId = curTweet.getJSONObject("data").getJSONObject("entities").get("id").toString();
+                sendTweetToKafka(this.topic,curUsername,curTweetId,curHashtags.toString());
             }
         }
         catch (Exception e){
             startTweeterStream();//change to restart always
         }
 
+    }
+    private void sendTweetToKafka(String topic, String username, String tweetId, String hashtags) throws Exception{
+        this.producer.send(new ProducerRecord<>(topic,username+tweetId+hashtags),(event, ex) -> {
+            if (ex != null){
+                ex.printStackTrace();
+            }
+            else {
+                System.out.println("Sent tweet to topic:"+this.topic);
+            }
+        });
+        this.producer.flush();
     }
 
 }
