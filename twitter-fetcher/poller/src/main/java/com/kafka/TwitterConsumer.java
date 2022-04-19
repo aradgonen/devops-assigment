@@ -1,6 +1,8 @@
 package com.kafka;
 
 import org.apache.kafka.clients.consumer.*;
+import org.json.JSONObject;
+
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Properties;
@@ -30,9 +32,10 @@ public class TwitterConsumer {
         while (true) {
             ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
             for (ConsumerRecord<String, String> record : records) {
-                String key = record.key();
-                String value = record.value();
-                System.out.println(String.format("Consumed event from topic %s: key = %-10s value = %s ", topic, key, value));
+                String tweetId = record.key();
+                String username = new JSONObject(record.value()).toMap().get("username").toString();
+                String hashtags = new JSONObject(record.value()).toMap().get("hashtags").toString();
+                System.out.println(String.format("Consumed event from topic %s: tweetID = %s username = %s hashtags = %s ", topic, tweetId, username, hashtags));
             }
         }
     }

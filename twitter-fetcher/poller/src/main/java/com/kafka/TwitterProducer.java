@@ -35,24 +35,30 @@ public class TwitterProducer {
             BufferedReader reader = twitterPoller.getTweetStreamByHashtag();
             String line = reader.readLine();
             while (line != null){
-                if(line.length()==19){
-                    sendTweetToKafka(this.topic,line,line,line);
+                line=reader.readLine();
+                if(line.length()==19 || line.length()==0){
+//                    sendTweetToKafka(this.topic,line,line,line);
                     continue;
                 }
-                JSONObject curTweet = new JSONObject(line);
-                ArrayList<String> curHashtags = (ArrayList<String>) curTweet.getJSONObject("data").getJSONObject("entities").get("hashtags");
-                String curUsername = curTweet.getJSONObject("data").getJSONObject("entities").get("username").toString();
-                String curTweetId = curTweet.getJSONObject("data").getJSONObject("entities").get("id").toString();
-                sendTweetToKafka(this.topic,curUsername,curTweetId,curHashtags.toString());
+                else{
+                    JSONObject curTweet = new JSONObject(line);
+                    String curHashtags = curTweet.getJSONObject("data").getJSONObject("entities").get("hashtags").toString();
+                    String curUsername = ((HashMap)curTweet.getJSONObject("includes").getJSONArray("users").toList().get(0)).get("username").toString();
+                    String curTweetId = curTweet.getJSONObject("data").get("id").toString();
+                    sendTweetToKafka(this.topic,curUsername,curTweetId,curHashtags);
+                }
             }
         }
         catch (Exception e){
-            startTweeterStream();//change to restart always
+                e.printStackTrace();
         }
 
     }
     private void sendTweetToKafka(String topic, String username, String tweetId, String hashtags) throws Exception{
-        this.producer.send(new ProducerRecord<>(topic,username+tweetId+hashtags),(event, ex) -> {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("username",username);
+        jsonObject.put("hashtags",hashtags);
+        this.producer.send(new ProducerRecord<>(topic,tweetId,jsonObject.toString()),(event, ex) -> {
             if (ex != null){
                 ex.printStackTrace();
             }

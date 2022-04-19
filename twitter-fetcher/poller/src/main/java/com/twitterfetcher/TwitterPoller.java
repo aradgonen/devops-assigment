@@ -19,21 +19,27 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
-
+import java.util.concurrent.TimeUnit;
 
 
 public class TwitterPoller implements Runnable{
     private static final String BASE_URL = "https://api.twitter.com"; //change it
     private static final String BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAANd%2BbgEAAAAAkZn1dU%2FI9ZBeqcyOhWIlH4Xp10I%3DzRmzrJju30hMlRvFULn99XW3eCFQeNFajwlCOMvXI29NQ5DsgG";
-    OkHttpClient okHttpClient = new OkHttpClient();
+    private OkHttpClient okHttpClient;
+
     private String hashtag;
 
     public TwitterPoller(String hashtag) {
         this.hashtag = hashtag;
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        builder.connectTimeout(50000, TimeUnit.MILLISECONDS);
+        builder.readTimeout(20000, TimeUnit.MILLISECONDS);
+        builder.writeTimeout(60000, TimeUnit.MILLISECONDS);
+        this.okHttpClient = new OkHttpClient(builder);
     }
 
     public BufferedReader getTweetStreamByHashtag() throws IOException {
-        Request request = new Request.Builder().url(BASE_URL+"/2/tweets/search/stream?tweet.fields=entities").header("Authorization","Bearer " + BEARER_TOKEN).build();
+        Request request = new Request.Builder().url(BASE_URL+"/2/tweets/search/stream?tweet.fields=entities&user.fields=username&expansions=entities.mentions.username").header("Authorization","Bearer " + BEARER_TOKEN).build();
         Response response = null;
         try {
             response = okHttpClient.newCall(request).execute();

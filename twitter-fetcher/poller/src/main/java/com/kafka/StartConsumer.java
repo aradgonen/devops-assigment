@@ -15,7 +15,7 @@ public class StartConsumer {
         properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,"org.apache.kafka.common.serialization.StringDeserializer");
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,"org.apache.kafka.common.serialization.StringDeserializer");
-        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,"localhost:29092");
+        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,System.getenv("BOOTSTRAP_SERVERS_CONFIG"));
 
         TwitterConsumer twitterConsumer = new TwitterConsumer(topic,properties);
         twitterConsumer.start();
