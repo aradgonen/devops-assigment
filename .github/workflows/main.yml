@@ -6,7 +6,7 @@ on:
       running_branch:
         description: Which branch to checkout from
         required: false
-        default: automation 
+        default: master 
 
 jobs:
   createDockerImage:
@@ -20,7 +20,7 @@ jobs:
           
       - name: Docker build
         run: |
-          make build
+          echo "Docker build"
       - name: Docker Push
         run: |
-          make push_to_registry
+          echo "Docker Push"
