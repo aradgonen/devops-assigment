@@ -7,20 +7,19 @@ on:
         description: Which branch to checkout from
         required: false
         default: master 
-
 jobs:
+
   createDockerImage:
-    runs-on: ubuntu-20.04
+
+    runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
-        with:
-          clean: 'false'
-          ref: ${{ github.event.inputs.running_branch }}
-          token: ${{ secrets.GIT_ACCESS_TOKEN }}
-          
-      - name: Docker build
-        run: |
-          echo "Docker build"
-      - name: Docker Push
-        run: |
-          echo "Docker Push"
+    - uses: actions/checkout@v3
+      with:
+        clean: 'false'
+        ref: ${{ github.event.inputs.running_branch }}
+        
+    - name: Docker build
+      run: ls -la
+    - name: Docker Push
+      run: ls -la
